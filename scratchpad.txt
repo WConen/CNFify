@@ -1,0 +1,135 @@
+<script>
+function handle(intxt,e) {
+    var ie = e.parentElement.nextSibling.firstChild.firstChild.nextSibling.firstChild;
+    var curPos = ie.selectionStart;
+    var curEnd = ie.selectionEnd;
+    var txt = ie.value;
+    ie.value = txt.slice(0,curPos)+intxt+txt.slice(curEnd);
+    if (ie.setSelectionRange) {
+        ie.setSelectionRange(curPos + intxt.length,curPos + intxt.length);
+    }
+    ie.focus();
+}
+</script>
+
+<button onclick="(function(e){handle('(',e);return false;})(this); return false;">(</button>
+<button onclick="(function(e){handle(')',e);return false;})(this); return false;">)</button>
+&nbsp;&nbsp;&nbsp;
+<button onclick="(function(e){handle('A',e);return false;})(this); return false;">A</button>
+<button onclick="(function(e){handle('B',e);return false;})(this); return false;">B</button>
+<button onclick="(function(e){handle('C',e);return false;})(this); return false;">C</button>
+<button onclick="(function(e){handle('D',e);return false;})(this); return false;">D</button>
+<button onclick="(function(e){handle('E',e);return false;})(this); return false;">E</button>
+&nbsp;&nbsp;&nbsp;
+<button onclick="(function(e){handle('\u00AC',e);return false;})(this); return false;">¬</button>
+<button onclick="(function(e){handle(' \u2227 ',e);return false;})(this); return false;">∧</button>
+<button onclick="(function(e){handle(' \u2228' ,e);return false;})(this); return false;">∨</button>
+<button onclick="(function(e){handle(' \u2192 ',e);return false;})(this); return false;">→</button>
+<button onclick="(function(e){handle(' \u2194 ',e);return false;})(this); return false;">↔</button>
+&nbsp;&nbsp;&nbsp;
+<button onclick="(function(e){handle('0',e);return false;})(this); return false;">0</button>
+<button onclick="(function(e){handle('1',e);return false;})(this); return false;">1</button>
+
+<!--
+<button onclick="(function(e){handle('\u22BC',e);return false;})(this); return false;">⊼</button>
+<button onclick="(function(e){handle('\u22BD',e);return false;})(this); return false;">⊽</button>
+-->
+
+<!--
+<button onclick="(function(e){handle(' \u2229 ',e);return false;})(this); return false;">∩</button>
+<button onclick="(function(e){handle(' \u222A ',e);return false;})(this); return false;">∪</button>
+<button onclick="(function(e){handle(' \u2288 ',e);return false;})(this); return false;">⊆</button>
+<button onclick="(function(e){handle(' = ',e);return false;})(this); return false;">=</button>
+
+Versuche, das in React zu moggeln:
+<<<<<
+Geht nicht über streamlit_javascript, weil 
+try
+      {
+        // eslint-disable-next-line
+        result = await eval("(async () => {return " + js_code + "})()")
+      } catch (e) {
+        result = String(e);
+        ;
+      }
+
+Das ins async verpackte eval in der Form nicht klappt für den längeren Input, meckert direkt am var herum.
+>>>>>
+from streamlit_javascript import st_javascript
+
+# // var ie = doc.querySelector('[type="input"]')
+
+html_inject = 'alert("Hallo");'
+html_inject_1 = '''
+<script>
+  function handle(intxt,e) {
+    // var ie = e.parentElement.nextSibling.firstChild.firstChild.nextSibling.firstChild;
+    e.preventDefault();
+    console.log(ie);
+    var curPos = ie.selectionStart;
+    var curEnd = ie.selectionEnd;
+    var txt = ie.value;
+    ie.value = txt.slice(0,curPos)+intxt+txt.slice(curEnd);
+    if (ie.setSelectionRange) {
+        ie.setSelectionRange(curPos + intxt.length,curPos + intxt.length);
+    }
+    ie.focus();
+}
+
+var button = document.createElement("button");
+button.innerHTML = "Do Something";
+
+// 2. Append somewhere
+var body = document.getElementsByTagName("body")[0];
+body.appendChild(button);
+
+// 3. Add event handler
+button.addEventListener ("click", function() {
+  alert("did something");
+});}
+</script>
+'''
+
+html_inject_2 = '''alert("Hallo");'''
+
+html_inject_3 = '''
+function handle(intxt,e) {
+    // var ie = e.parentElement.nextSibling.firstChild.firstChild.nextSibling.firstChild;
+    e.preventDefault();
+    var ie = document.querySelector('[type="input"]')
+    console.log(ie);
+    var curPos = ie.selectionStart;
+    var curEnd = ie.selectionEnd;
+    var txt = ie.value;
+    ie.value = txt.slice(0,curPos)+intxt+txt.slice(curEnd);
+    if (ie.setSelectionRange) {
+        ie.setSelectionRange(curPos + intxt.length,curPos + intxt.length);
+    }
+    ie.focus();
+}
+
+var button = document.createElement("button");
+button.innerHTML = "Do Something";
+
+console.log(button);
+
+// 2. Append somewhere
+var body = document.getElementsByTagName("body")[0];
+body.appendChild(button);
+
+// 3. Add event handler
+button.addEventListener ("click", function() {
+  alert("did something");
+});
+'''
+
+html_inject_3 = '''var button = document.createElement("button");button.innerHTML = "Do Something";alert(button);var body = document.getElementsByTagName("body")[0];body.appendChild(button);button.addEventListener ("click", function() {alert("did something");});'''
+
+st.write(st_javascript(html_inject_3))
+# st_javascript(html_inject)
+
+# st.markdown(html_inject,unsafe_allow_html=True)
+# st.markdown("<button onclick=\{(e) => this.handle('¬',e);\}>¬</button>",unsafe_allow_html=True)
+# st.markdown("<button onclick={this.handle('¬',e)}>¬</button>",unsafe_allow_html=True)
+# st.markdown('''<input type="button" onclick="(function(e){handle('\u00AC',e);return false;})(this); return false;">¬</input>''',unsafe_allow_html=True)
+
