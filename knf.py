@@ -496,14 +496,12 @@ transform_step2(res,debug=0)
 print("Schritt 2:",res)
 check2(res) """
 
-# Eval the formula against its atoms
-def check_(t:Tree,atoms,debug=0):
-  def perm(atoms):
+def perm(atoms):
     if len(atoms)==0: return [dict()]
     res1 = dict()
-    res1[atoms[-1]] = True
+    res1[atoms[-1]] = False
     res2 = dict()
-    res2[atoms[-1]] = False
+    res2[atoms[-1]] = True
     perms = perm(atoms[0:-1])
     res = []
     for p in perms:
@@ -513,7 +511,10 @@ def check_(t:Tree,atoms,debug=0):
       res.append(dic2)
     return res
 
+# Eval the formula against its atoms
+def check_(t:Tree,atoms,debug=0):
   perms = perm(atoms)
+  # print(perms)
   print("Eval",t,": \n    ",end='')
   for p in perms:
     if debug:
@@ -526,20 +527,6 @@ def check_(t:Tree,atoms,debug=0):
 # We assume that the atom list is sorted
 def check_markdown(t:Tree,atoms):
     out = ''
-    def perm(atoms):
-        if len(atoms)==0: return [dict()]
-        res1 = dict()
-        res1[atoms[-1]] = True
-        res2 = dict()
-        res2[atoms[-1]] = False
-        perms = perm(atoms[0:-1])
-        res = []
-        for p in perms:
-            dic1 = {**p,**res1}
-            dic2 = {**p,**res2}
-            res.append(dic1)
-            res.append(dic2)
-        return res
 
     # Table head
     for a in atoms:
